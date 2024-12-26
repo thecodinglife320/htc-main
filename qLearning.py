@@ -2,13 +2,13 @@ import pickle
 import random
 alpha = 0.1 #learning rate
 gamma = 0.9 #giảm giá trị phần thưởng tương lai
-epsilon = 0.6 #xác xuất chọn hành động ngẫu nhiên(khám phá)
+epsilon = 0.2 #xác xuất chọn hành động ngẫu nhiên(khám phá)
 reward = 0 #phần thưởng
 move_previous=[0,0]
 
 def qlearning_tic_tac_toe(board_state,ai_symbol):
     try:
-        with open("q_table.pkl", "rb") as f:
+        with open("q_table_expanded.pkl", "rb") as f:
             Q_table = pickle.load(f)
     except FileNotFoundError:
         Q_table = {}
@@ -51,7 +51,7 @@ def qlearning_tic_tac_toe(board_state,ai_symbol):
 def choose_move(state, valid_moves,Q_table):
     if random.uniform(0, 1) < epsilon:  # Khám phá
         return random.choice(valid_moves)
-    else:  # Ưu tiên khai thác
+    else:  #khai thác
         q_values = [Q_table.get((state, move), 0) for move in valid_moves]
         print(q_values)
         return valid_moves[q_values.index(max(q_values))]
@@ -62,7 +62,7 @@ def update_q_table(state, move, reward, next_state, valid_moves,Q_table):
     current_q_value = Q_table.get((state, move), 0)
     Q_table[(state, move)] = current_q_value + alpha * (reward + gamma * max_next_q_value - current_q_value)
 
-def save_q_table(q_table, filename="q_table.pkl"):
+def save_q_table(q_table, filename="q_table_expanded.pkl"):
     with open(filename, "wb") as f:
         pickle.dump(q_table, f)
     print(f"Q-table saved to {filename}")
