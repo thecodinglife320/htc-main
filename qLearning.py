@@ -15,9 +15,11 @@ def qlearning_tic_tac_toe(board_state,ai_symbol):
 
     if (ai_symbol=='O'): player_symbol='X'
     else: player_symbol='O'
+
     state = board_to_state(board_state)
-    print('previous_move_ai:',end=' ')
-    print(move_previous)
+    # print('previous_move_ai:',end=' ')
+    # print(move_previous)
+
     #kiểm tra người chơi thắng
     if check_winner(board_state,player_symbol):
         update_q_table(state, (move_previous[0],move_previous[1]), -1, None, [],Q_table)
@@ -33,7 +35,7 @@ def qlearning_tic_tac_toe(board_state,ai_symbol):
     #tim ra các nước đi còn lại
     valid_moves = [(i, j) for i in range(3) for j in range(3) if board_state[i][j] == '']
     
-    #chọn nước đi tốt nhất và đánh dấu trên bàn cờ
+    #chọn nước đi và đánh dấu trên bàn cờ
     move = choose_move(state, valid_moves,Q_table)
     move_previous[0], move_previous[1] = move
     board_state[move_previous[0]][move_previous[1]] = ai_symbol
@@ -52,11 +54,13 @@ def choose_move(state, valid_moves,Q_table):
     if random.uniform(0, 1) < epsilon:  # Khám phá
         return random.choice(valid_moves)
     else:  #khai thác
+        print(valid_moves)
         q_values = [Q_table.get((state, move), 0) for move in valid_moves]
         print(q_values)
-        return valid_moves[q_values.index(max(q_values))]
+        return valid_moves[q_values.index(max(q_values))]   # max q-value của cặp state, action
     
 def update_q_table(state, move, reward, next_state, valid_moves,Q_table):
+    #danh sách q-value của các hành động ở trạng thái tiếp theo
     next_q_values = [Q_table.get((next_state, move), 0) for move in valid_moves]
     max_next_q_value = max(next_q_values,default=0)
     current_q_value = Q_table.get((state, move), 0)
